@@ -1,0 +1,25 @@
+name: Sync
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+  schedule:
+    # 毎週月曜 05:00 JST。人口は毎月、防災設備は随時の更新
+    - cron: "0 20 * * 0"
+  workflow_dispatch:
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    uses: queria-io/dataset-shared/.github/workflows/sync.yml@main
+    with:
+      dataset_name: nerima
+      # 住所のジオコーディングに abr-geocoder（Node のツール）を使う。
+      # 依存の better-sqlite3 が Node 24 でビルドできないので版を固定する
+      node_version: "22"
+    secrets: inherit
