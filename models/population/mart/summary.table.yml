@@ -1,0 +1,34 @@
+schema: population
+name: summary
+title: 世帯と人口（総括表）
+description: 練馬区が公開する「世帯と人口（総括表）」。住民基本台帳による区全体の世帯数と人口を月次で収録する。1行=調査年月×統計項目×区分。統計項目は世帯数・総人口・日本人の人口・外国人の人口で、区分は男・女・計（世帯数は区分を持たない）。収録は2016年4月から。区が全期間をまとめて公開している1本のCSVから作っているため月の欠けが無い。
+keywords:
+- 練馬区
+- 東京都
+- 人口
+- 世帯
+- 住民基本台帳
+- 時系列
+published: true
+sources:
+- path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/soukatuhyou.html
+fields:
+- name: survey_month
+  title: 調査年月
+  description: 各月1日時点
+- name: item
+  title: 統計項目
+  description: 世帯数 / 総人口 / 日本人の人口 / 外国人の人口
+- name: category
+  title: 区分
+  description: 男 / 女 / 計。世帯数の行は NULL
+- name: value
+  title: 数値
+- name: unit
+  title: 単位
+  description: 世帯 または 人
+- name: source_url
+  title: 取得元URL
+- name: source_page
+  title: 公開ページ
+  description: 練馬区サイト上の、このデータの公開ページ

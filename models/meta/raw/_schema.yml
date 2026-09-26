@@ -1,0 +1,5 @@
+version: 2
+
+models:
+- name: raw_source_files
+  description: 取り込みの実行結果の生データ。population と bosai の2本の NDJSON をまとめる。

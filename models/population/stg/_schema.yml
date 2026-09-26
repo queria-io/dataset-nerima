@@ -1,0 +1,9 @@
+version: 2
+
+models:
+- name: stg_summary
+  description: 総括表のステージング。調査年月を DATE に、数値を BIGINT にする。
+- name: stg_by_town
+  description: 町丁目別のステージング。調査年月を DATE に、世帯数と人口を BIGINT にし、丁目の数値を取り出す。
+- name: stg_by_age
+  description: 年齢別のステージング。調査年月を DATE に、人数を BIGINT にし、総計行を is_total で立てる。

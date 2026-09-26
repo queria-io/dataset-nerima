@@ -1,0 +1,53 @@
+schema: meta
+name: source_files
+title: 取り込み記録
+description: 練馬区のサイトから取りに行ったファイル1本につき1行。成功も失敗も残る。テーブルの行数が少ないときにここを見ると、原典がそうなのか取り込みで落ちたのかを切り分けられる。世帯と人口のまとめCSVは同一キーの行が2組ある調査年月を月次個別ファイルで裏取りしており、どの月で裏取りしたかは resolved_months で引ける。
+keywords:
+- 練馬区
+- メタデータ
+- 取り込み
+- 品質
+published: true
+sources:
+- path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/index.html
+fields:
+- name: schema_name
+  title: スキーマ
+  description: population または bosai
+- name: dataset_id
+  title: 種別ID
+  description: 出力先のテーブル名
+- name: dataset_title
+  title: 原典のデータセット名
+- name: category
+  title: 区分
+  description: 同じテーブルに複数のファイルを寄せている種別で、その行がどちらの出どころかを表す
+- name: status
+  title: 取り込みの結果
+  description: ok=取り込めた、degraded=取り込めたが裏取りできない調査年月が残った、skipped=様式が合わないので入れていない、failed=取得できなかった
+- name: reason
+  title: 理由
+  description: status が ok 以外のときの内容
+- name: encoding
+  title: 文字コード
+  description: 判定した文字コード。練馬区はファイルによって UTF-8 と CP932 が混在する
+- name: row_count
+  title: 行数
+- name: dropped_rows
+  title: 落とした行数
+  description: 重複として落とした行数。世帯と人口の3系列のみ
+- name: resolved_months
+  title: 裏取りした調査年月
+  description: 同一キーの行が2組あり、月次個別ファイルと一致する側に絞った調査年月
+- name: unresolved_months
+  title: 裏取りできなかった調査年月
+  description: 2組のまま残した調査年月。値の根拠が無いまま片方を選ばないため
+- name: file_label
+  title: リンク文字列
+  description: 公開ページでこのファイルに付いていた表示名
+- name: url
+  title: 取得元URL
+- name: page
+  title: 公開ページ
+- name: fetched_at
+  title: 取得時刻

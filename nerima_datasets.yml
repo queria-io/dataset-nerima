@@ -1,0 +1,50 @@
+# 練馬区オープンデータの取り込み定義。
+#
+# 練馬区のオープンデータサイトは CKAN ではなく静的な HTML で、API が無い。
+# 一覧 131202_open_data_list.csv は42列の標準様式で出ているが、ファイル_タイトル・
+# ファイル_アクセスURL・ファイル_ダウンロードURL・ファイル_サイズは64行すべて空なので、
+# 一覧から実ファイルには到達できない（2026-09-26 時点の実測）。そのため各データセットの
+# ページを開き、置かれている添付ファイルの中からファイル名の正規表現で対象を選ぶ。
+#
+# ファイル URL を直に書かないのは、人口のまとめ CSV のファイル名が収録期間を含んでいて
+# 毎月変わるため（例 201604-202609soukatu.csv）。ページ側のファイル名の付け方が変わったら
+# ここの正規表現を直す。
+#
+# page            データセットのページ。base_url からの相対
+# file_pattern    取り込む本体ファイル。ファイル名に対する正規表現（完全一致）
+# archive_pattern 年度 ZIP。同一キーの行が2組ある調査年月の裏取りに使う
+# monthly_pattern 年度 ZIP の中の月次個別ファイル。捕獲グループは YYYYMM
+# shape           パーサの種類。pipelines/population.py の PARSERS のキー
+# columns[].source  照合するヘッダー名を優先順に並べたもの。先にマッチした列を採用する。
+#                   どの標準キーにもマッチしないヘッダーの値は _extras に退避する
+
+base_url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/
+
+# 世帯と人口。3系列とも全期間をまとめた CSV が1本置かれていて、月次の個別ファイルを
+# 継ぎ足す必要がない。ただしまとめ CSV には 2018年10月・11月・12月だけ同一キーの行が
+# 2組入っている（3系列すべて）。値は別物で、列では区別できない。年度 ZIP の月次個別
+# ファイルと一致する側だけを採るため、重複が出た調査年月に限って ZIP を取りに行く。
+population:
+  - id: summary
+    title: 世帯と人口（総括表）
+    page: tokei_kusei/soukatuhyou.html
+    shape: summary
+    file_pattern: '\d{6}-\d{6}soukatu\.csv'
+    archive_pattern: '(\d{4})soukatu\.zip'
+    monthly_pattern: '(\d{6})soukatu\.csv'
+
+  - id: by_town
+    title: 世帯と人口（町丁目別）
+    page: tokei_kusei/chouchoubetu.html
+    shape: by_town
+    file_pattern: '\d{6}-\d{6}chouchoubetu\.csv'
+    archive_pattern: '(\d{4})chouchoubetu\.zip'
+    monthly_pattern: '(\d{6})chouchoubetu\.csv'
+
+  - id: by_age
+    title: 世帯と人口（年齢別）
+    page: tokei_kusei/nenreibetu.html
+    shape: by_age
+    file_pattern: '131202_nenreibetu_\d{6}-\d{6}\.csv'
+    archive_pattern: '(\d{4})nenreibetu\.zip'
+    monthly_pattern: '(\d{6})nenreibetu\.csv'

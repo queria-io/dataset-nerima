@@ -1,0 +1,9 @@
+version: 2
+
+models:
+- name: raw_summary
+  description: 世帯と人口（総括表）の生データ。まとめ CSV を取り込み、2018年10〜12月の二重の行を月次個別ファイルで裏取りしてある。全列 VARCHAR。
+- name: raw_by_town
+  description: 世帯と人口（町丁目別）の生データ。同じく二重の行を裏取り済み。全列 VARCHAR。
+- name: raw_by_age
+  description: 世帯と人口（年齢別）の生データ。同じく二重の行を裏取り済み。全列 VARCHAR。

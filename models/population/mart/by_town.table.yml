@@ -1,0 +1,46 @@
+schema: population
+name: by_town
+title: 世帯と人口（町丁目別）
+description: 練馬区が公開する「世帯と人口（町丁目別）」。住民基本台帳による町丁目単位の世帯数と男女別人口を月次で収録する。1行=調査年月×町丁目。区全体と町域の集計行を含むので、町丁目だけを数えるときは area_level='丁目' で絞る。収録は2016年4月から。国勢調査の境界データと名前で結合するときは、丁目の数字が全角である点に注意する。
+keywords:
+- 練馬区
+- 東京都
+- 人口
+- 世帯
+- 町丁目
+- 小地域
+- 住民基本台帳
+published: true
+sources:
+- path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchoubetu.html
+fields:
+- name: survey_month
+  title: 調査年月
+  description: 各月1日時点
+- name: town
+  title: 町丁目
+  description: 原典の表記のまま。丁目の数字は全角
+- name: area_level
+  title: 地域階層
+  description: 総数=区全体、町域計=町ごとの合計、丁目=丁目単位
+- name: town_name
+  title: 町名
+- name: chome
+  title: 丁目
+  description: 原典の表記のまま（全角数字）
+- name: chome_number
+  title: 丁目（数値）
+  description: Queria が付与。丁目を半角の整数にした値。町域計と総数の行は NULL
+- name: households
+  title: 世帯数
+- name: male
+  title: 人口（男）
+- name: female
+  title: 人口（女）
+- name: total
+  title: 人口（計）
+- name: source_url
+  title: 取得元URL
+- name: source_page
+  title: 公開ページ
+  description: 練馬区サイト上の、このデータの公開ページ

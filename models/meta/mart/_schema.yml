@@ -1,0 +1,22 @@
+version: 2
+
+models:
+- name: source_files
+  description: 取り込みの実行結果。1行 = 取りに行ったファイル1本。
+  access: public
+  columns:
+  - name: schema_name
+  - name: dataset_id
+  - name: dataset_title
+  - name: category
+  - name: status
+  - name: reason
+  - name: encoding
+  - name: row_count
+  - name: dropped_rows
+  - name: resolved_months
+  - name: unresolved_months
+  - name: file_label
+  - name: url
+  - name: page
+  - name: fetched_at

@@ -1,0 +1,76 @@
+version: 2
+
+models:
+- name: summary
+  description: 練馬区が公開する「世帯と人口（総括表）」。住民基本台帳による区全体の世帯数と人口を月次で持つ。1行 = 調査年月 × 統計項目 × 区分。
+  access: public
+  data_tests:
+  - unique_key:
+      columns: [survey_month, item, category]
+  columns:
+  - name: survey_month
+    data_tests:
+    - not_null
+  - name: item
+    data_tests:
+    - not_null
+  - name: category
+  - name: value
+  - name: unit
+  - name: source_url
+  - name: source_page
+
+- name: by_town
+  description: 練馬区が公開する「世帯と人口（町丁目別）」。住民基本台帳による町丁目単位の世帯数と男女別人口を月次で持つ。1行 = 調査年月 × 町丁目で、区全体と町域の集計行を含む。
+  access: public
+  data_tests:
+  - unique_key:
+      columns: [survey_month, town]
+  columns:
+  - name: survey_month
+    data_tests:
+    - not_null
+  - name: town
+    data_tests:
+    - not_null
+  - name: area_level
+    data_tests:
+    - not_null
+    - accepted_values:
+        values: ["総数", "町域計", "丁目"]
+  - name: town_name
+  - name: chome
+  - name: chome_number
+  - name: households
+  - name: male
+  - name: female
+  - name: total
+  - name: source_url
+  - name: source_page
+
+- name: by_age
+  description: 練馬区が公開する「世帯と人口（年齢別）」。住民基本台帳による1歳刻みの人口を月次で持つ。1行 = 調査年月 × 年齢 × 性別で、総計行と不詳者の行を含む。
+  access: public
+  data_tests:
+  - unique_key:
+      columns: [survey_month, age, sex]
+  columns:
+  - name: survey_month
+    data_tests:
+    - not_null
+  - name: age
+    data_tests:
+    - not_null
+  - name: age_years
+  - name: is_total
+    data_tests:
+    - not_null
+  - name: sex
+    data_tests:
+    - not_null
+    - accepted_values:
+        values: ["合計", "男性", "女性"]
+  - name: value
+  - name: unit
+  - name: source_url
+  - name: source_page
