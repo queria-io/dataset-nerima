@@ -12,7 +12,6 @@ models:
   - name: name
     data_tests:
     - not_null
-    - unique
   - name: address
     data_tests:
     - not_null
@@ -43,7 +42,6 @@ models:
   - name: name
     data_tests:
     - not_null
-    - unique
   - name: name_kana
   - name: name_en
   - name: town_id
@@ -102,7 +100,6 @@ models:
   - name: name
     data_tests:
     - not_null
-    - unique
   - name: name_kana
   - name: name_en
   - name: town_id

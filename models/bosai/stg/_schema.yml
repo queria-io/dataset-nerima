@@ -3,6 +3,12 @@ version: 2
 models:
 - name: stg_geocode
   description: ジオコーディング結果のステージング。住所で引くための表。
+  columns:
+  - name: address
+    description: 原典の住所。この表が住所で一意でないと、施設側との左結合で行が増える
+    data_tests:
+    - not_null
+    - unique
 - name: stg_evacuation_base
   description: 避難拠点のステージング。緯度経度を数値化し、地図表示用の座標を決める。
 - name: stg_homecoming_support_station
