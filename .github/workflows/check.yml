@@ -1,0 +1,23 @@
+name: Check
+
+on:
+  pull_request:
+    paths:
+      - "pipelines/**"
+      - "tests/pipelines/**"
+      - "nerima_datasets.yml"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/check.yml"
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      # dev は default-groups から外してあるので明示的に入れる
+      - run: uv run --group dev pytest tests/pipelines -q
