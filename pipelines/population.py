@@ -202,13 +202,19 @@ def _monthly_from_archive(
         logger.warning("    年度 ZIP を取れない: %s (%s)", archive, e)
         return None
     member_pattern = re.compile(entry["monthly_pattern"] + r"\Z")
-    with zipfile.ZipFile(io.BytesIO(blob)) as zf:
-        for name in zf.namelist():
-            base = name.rsplit("/", 1)[-1]
-            match = member_pattern.match(base)
-            if match and match.group(1) == year_month:
-                rows, _ = read_rows(zf.read(name))
-                return SHAPES[entry["shape"]]["monthly"](rows)
+    try:
+        # 取得元が 200 で HTML のエラーページを返すことがある。ZIP として開けない
+        # のは取得失敗と同じ扱いにして、系列ごとの隔離をすり抜けさせない
+        with zipfile.ZipFile(io.BytesIO(blob)) as zf:
+            for name in zf.namelist():
+                base = name.rsplit("/", 1)[-1]
+                match = member_pattern.match(base)
+                if match and match.group(1) == year_month:
+                    rows, _ = read_rows(zf.read(name))
+                    return SHAPES[entry["shape"]]["monthly"](rows)
+    except (zipfile.BadZipFile, OSError, UnicodeError) as e:
+        logger.warning("    年度 ZIP を読めない: %s (%s)", archive, e)
+        return None
     return None
 
 
@@ -259,16 +265,23 @@ def _resolve_duplicates(
                 continue
             seen.add(pair)
             picked.append(row)
+
+        # 採った行が月次個別ファイルと1対1で対応していなければ、その月は裏が取れて
+        # いない。どちらの組とも違う値を月次が持つキーがあると、そのキーだけ両方とも
+        # 落ちて黙って欠ける。件数が合うことをその歯止めにする
         picked_keys = [_tuple_of(row, shape["key"]) for row in picked]
-        if not picked or len(picked_keys) != len(set(picked_keys)):
+        if (
+            not picked
+            or len(picked_keys) != len(set(picked_keys))
+            or len(picked) != len(monthly)
+        ):
+            logger.warning(
+                "    %s: 月次個別ファイルは %d 行だが一致したのは %d 行。原典のまま残す",
+                month, len(monthly), len(picked),
+            )
             unresolved.append(month)
             kept.extend(rows)
             continue
-        if len(picked) != len(monthly):
-            logger.warning(
-                "    %s: 月次個別ファイルは %d 行だが %d 行しか一致しない",
-                month, len(monthly), len(picked),
-            )
 
         logger.info(
             "    %s: %d 行 → %d 行（月次個別ファイルと一致した側）",
