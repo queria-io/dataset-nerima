@@ -24,7 +24,7 @@ fields:
   description: 同じテーブルに複数のファイルを寄せている種別で、その行がどちらの出どころかを表す
 - name: status
   title: 取り込みの結果
-  description: ok=取り込めた、degraded=取り込めたが裏取りできない調査年月が残った、skipped=様式が合わないので入れていない、failed=取得できなかった
+  description: ok=取り込めた、degraded=取り込めたが二重の行を裏取りできない調査年月が残った、skipped=様式が合わないので入れていない、failed=取得できなかった。ok 以外はビルドが落ちて公開が前回のまま据え置かれるので、この表で ok 以外を見るのはビルドが落ちた原因を調べるとき
 - name: reason
   title: 理由
   description: status が ok 以外のときの内容

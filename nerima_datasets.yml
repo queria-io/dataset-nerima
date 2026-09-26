@@ -14,7 +14,7 @@
 # file_pattern    取り込む本体ファイル。ファイル名に対する正規表現（完全一致）
 # archive_pattern 年度 ZIP。同一キーの行が2組ある調査年月の裏取りに使う
 # monthly_pattern 年度 ZIP の中の月次個別ファイル。捕獲グループは YYYYMM
-# shape           パーサの種類。pipelines/population.py の PARSERS のキー
+# shape           パーサの種類。pipelines/population.py の SHAPES のキー
 # columns[].source  照合するヘッダー名を優先順に並べたもの。先にマッチした列を採用する。
 #                   どの標準キーにもマッチしないヘッダーの値は _extras に退避する
 

@@ -13,8 +13,9 @@
    「原典の座標を取りこぼしていないか」だけで、補完の効きは
    ods_geocode_coverage が別に見る。
 
-   既定の 0.95 は実測（ods の16種別すべてで 0.98 以上、最小は ods.event の 0.990。
-   childcare の2表はいずれも 1.000）から取る。 #}
+   既定の 0.95 は実測から取る。練馬区で原典が座標を持つのは bosai の3表で、
+   いずれも 1.000（2026-09-26 時点）。bosai.disaster_well は原典が座標を持たないので
+   分母が 0 になり、この検査は素通りする。そちらは ods_geocode_coverage が見る。 #}
 
 {% test ods_geo_coverage(model, min_ratio=0.95) %}
 
