@@ -1,0 +1,88 @@
+spec_version: "0.1"
+name: nerima
+title: 練馬区オープンデータ
+description: |-
+  東京都練馬区がオープンデータサイトで公開しているデータ。住民基本台帳による世帯と人口の
+  月次時系列（2016年4月以降、総括表・町丁目別・年齢別）と、災害時に使える設備の一覧
+  （避難拠点・帰宅支援ステーション・災害時給水ステーション・防災井戸）を収録する。
+keywords:
+  - オープンデータ
+  - 練馬区
+  - 東京都
+  - 人口
+  - 世帯
+  - 町丁目
+  - 防災
+  - 避難
+  - GIS
+homepage: https://github.com/queria-io/dataset-nerima
+language: ja
+
+licenses:
+  - CC-BY-4.0
+
+sources:
+  - title: 練馬区オープンデータサイト
+    path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/index.html
+  - title: 練馬区オープンデータ利用規約
+    path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/index.files/riyoukiyaku.pdf
+
+contributors:
+  - title: 練馬区
+    path: https://www.city.nerima.tokyo.jp/
+    roles: [rightsHolder]
+
+temporal_coverage: { start: "2016-04-01", end: "2026-09-01" }
+spatial_coverage: [JP]
+update_frequency: monthly
+cover: 🥬
+
+ai_context:
+  instructions: |
+    練馬区が自区のサイトで公開しているデータ。東京都オープンデータカタログサイトを
+    取り込んだ metro_tokyo とは収録が重ならない。区が公開する64データセットのうち
+    都カタログ経由で取れるのは14種別で、ここに入れてあるのはそこに無いもの。
+    区の AED・公共施設・公園トイレ・指定緊急避難場所などは metro_tokyo.ods.* にある。
+
+    population は住民基本台帳による世帯と人口。区が全期間をまとめた CSV を出しているので
+    月次を継ぎ足しておらず、2016年4月からの月次が切れ目なく入っている。
+    **3表とも集計行を含む。** by_town は area_level（総数 / 町域計 / 丁目）、
+    by_age は is_total で分ける。町丁目だけを数えるなら area_level = '丁目'、
+    年齢を足すなら is_total = false で絞る。
+    summary の item は 世帯数 / 総人口 / 日本人の人口 / 外国人の人口 で、
+    category は 男 / 女 / 計（世帯数だけ NULL）。収録している123か月すべてで
+    日本人+外国人=総人口、男+女=計、by_town の総数=summary の総人口計 が成り立つ。
+    by_age は 2026年6月だけ sex = '合計' の行が無く、男性と女性しかない。
+    年齢のラベルは原典が「総 数」（全角空白入り）で2026年6月だけ「総数」なので、
+    総計を引くときは age ではなく is_total を使う。不詳者の行がある。
+    by_age の収録は2017年4月から（他の2表は2016年4月から）。
+
+    原典のまとめ CSV には 2018年10月・11月・12月に限って同一キーの行が2組ある。
+    値は別物で列では区別できない。年度 ZIP の月次個別ファイルと一致する側だけを採って
+    あるので、この3か月も他の月と同じように扱える。どの月で裏取りしたかは
+    meta.source_files の resolved_months で引ける。
+
+    bosai は災害時に使える設備。地図に出すときは lat / lon ではなく
+    geo_lat / geo_lon / geometry を使う。**disaster_well は原典が緯度経度の列を持つが
+    全行空**で、座標はすべて住所から ABR（アドレス・ベース・レジストリ）で求めた値。
+    由来は geo_source（source / source_swapped / abr）、粒度は geo_level で引ける。
+    evacuation_base は区立小中学校に置かれる避難拠点で、原典が4列しかなく
+    名称・所在地・座標だけを持つ。所在地に「東京都練馬区」が付かない。
+    指定緊急避難場所は別のデータで、metro_tokyo.ods.evacuation_space にある。
+    disaster_well は category で 民間 と 学校 を分ける。
+
+    取り込みの実行結果は meta.source_files にある。テーブルの行数が少ないときは
+    status と row_count を見ると、原典がそうなのか取り込みで落ちたのかを切り分けられる。
+  synonyms: [練馬区, ねりま, 練馬区オープンデータ, 住民基本台帳人口, 避難拠点, 防災井戸]
+  examples:
+    - 練馬区の町丁目別人口の推移を出したい
+    - 練馬区の高齢化率を月次で見たい
+    - 災害時に使える給水ステーションと井戸を地図に出したい
+
+schemas:
+  - name: population
+    title: 世帯と人口
+  - name: bosai
+    title: 防災設備
+  - name: meta
+    title: 取り込み記録
