@@ -1,0 +1,52 @@
+schema: bosai
+name: evacuation_base
+title: 避難拠点
+description: 練馬区が公開する「避難拠点」。区立小中学校に設置される避難拠点の名称・所在地・位置。原典は名称・所在地・経度・緯度の4列で、自治体標準オープンデータセットの様式ではない。所在地に「東京都練馬区」が付かない。災害対策基本法に基づく指定緊急避難場所は別のデータで、metro_tokyo.ods.evacuation_space にある。
+keywords:
+- 練馬区
+- 東京都
+- 防災
+- 避難
+- 学校
+- GIS
+published: true
+sources:
+- path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/bosai/hinankyoten.html
+fields:
+- name: name
+  title: 名称
+  description: 学校名の略称（「旭丘小」など）
+- name: address
+  title: 所在地
+  description: 原典の表記のまま。都道府県名と区名を含まない
+- name: lat
+  title: 緯度
+  description: 原典の値
+- name: lon
+  title: 経度
+  description: 原典の値
+- name: geo_lat
+  title: 緯度（地図表示用）
+  description: Queria が付与。原典の緯度経度が使えればその値、使えなければ住所から求めた値。由来は geo_source を見る
+- name: geo_lon
+  title: 経度（地図表示用）
+  description: Queria が付与。geo_lat と対になる経度
+- name: geo_source
+  title: 座標の由来
+  description: source=原典のまま、source_swapped=原典で緯度と経度が入れ替わっていたので入れ替えて採用、abr=住所から求めた値
+- name: geo_level
+  title: 座標の粒度
+  description: 原典由来は source。住所から求めた場合は residential_detail / residential_block / machiaza_detail / machiaza
+- name: geometry
+  title: ジオメトリ
+  description: Queria が付与。geo_lat / geo_lon から作った POINT。座標が無い行は NULL
+- name: extras
+  title: 追加列
+  description: 標準列にマッピングできなかった原典の列（JSON）
+- name: source_title
+  title: 原典のデータセット名
+- name: source_url
+  title: 取得元URL
+- name: source_page
+  title: 公開ページ
+  description: 練馬区サイト上の、このデータの公開ページ

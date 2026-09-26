@@ -1,0 +1,13 @@
+version: 2
+
+models:
+- name: stg_geocode
+  description: ジオコーディング結果のステージング。住所で引くための表。
+- name: stg_evacuation_base
+  description: 避難拠点のステージング。緯度経度を数値化し、地図表示用の座標を決める。
+- name: stg_homecoming_support_station
+  description: 帰宅支援ステーションのステージング。緯度経度を数値化し、災害種別を BOOLEAN にする。
+- name: stg_emergency_water_station
+  description: 災害時給水ステーションのステージング。緯度経度を数値化し、種別を BOOLEAN にする。
+- name: stg_disaster_well
+  description: 防災井戸のステージング。原典に座標が無いため、地図表示用の座標は住所からのジオコーディングだけが供給する。

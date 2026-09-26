@@ -48,3 +48,134 @@ population:
     file_pattern: '131202_nenreibetu_\d{6}-\d{6}\.csv'
     archive_pattern: '(\d{4})nenreibetu\.zip'
     monthly_pattern: '(\d{6})nenreibetu\.csv'
+
+# 防災設備。すべて単一 CSV のスナップショットで、時点はページの掲載に従う。
+# 練馬区が自区サイトでのみ公開していて、東京都オープンデータカタログサイト経由では
+# 外部に出ていない（2026-09-26 時点の実測）。
+bosai:
+  - id: evacuation_base
+    title: 避難拠点
+    page: bosai/hinankyoten.html
+    file_pattern: 'hinankyoten\d*\.csv'
+    # 自治体標準オープンデータセットの様式ではなく4列（名称・所在地・経度・緯度）。
+    # 所在地に「東京都練馬区」が付かないので、ジオコーディングの入力では前置する
+    columns:
+      - key: name
+        source: ["名称"]
+      - key: address
+        source: ["所在地"]
+      - key: lat
+        source: ["緯度"]
+      - key: lon
+        source: ["経度"]
+
+  - id: homecoming_support_station
+    title: 帰宅支援ステーション
+    page: bosai/kitakusien.html
+    file_pattern: 'kitakusien\d*\.csv'
+    columns: &standard_facility
+      - key: municipality_code
+        source: ["全国地方公共団体コード"]
+      - key: municipality_name
+        source: ["地方公共団体名"]
+      - key: address_municipality_code
+        source: ["所在地_全国地方公共団体コード"]
+      - key: facility_id
+        source: ["ID"]
+      - key: name
+        source: ["名称"]
+      - key: name_kana
+        source: ["名称_カナ"]
+      - key: name_en
+        source: ["名称_英字"]
+      - key: town_id
+        source: ["町字ID"]
+      - key: address
+        source: ["所在地_連結表記"]
+      - key: prefecture
+        source: ["所在地_都道府県"]
+      - key: city
+        source: ["所在地_市区町村"]
+      - key: town
+        source: ["所在地_町字"]
+      - key: street_number
+        source: ["所在地_番地以下"]
+      - key: building_name
+        source: ["建物名等(方書)", "建物名等（方書）"]
+      - key: lat
+        source: ["緯度"]
+      - key: lon
+        source: ["経度"]
+      - key: elevation
+        source: ["標高"]
+      - key: phone_number
+        source: ["電話番号"]
+      - key: extension
+        source: ["内線番号"]
+      - key: contact_email
+        source: ["連絡先メールアドレス"]
+      - key: contact_form_url
+        source: ["連絡先FormURL"]
+      - key: contact_note
+        source: ["連絡先備考（その他、SNSなど）"]
+      - key: postal_code
+        source: ["郵便番号"]
+      - key: url
+        source: ["URL"]
+      - key: image
+        source: ["画像"]
+      - key: image_license
+        source: ["画像_ライセンス"]
+      - key: notes
+        source: ["備考"]
+    extra_columns:
+      - key: for_flood
+        source: ["災害種別_洪水"]
+      - key: for_landslide
+        source: ["災害種別_崖崩れ、土石流及び地滑り", "災害種別_崖崩れ・土石流及び地滑り"]
+      - key: for_storm_surge
+        source: ["災害種別_高潮"]
+      - key: for_earthquake
+        source: ["災害種別_地震"]
+      - key: for_tsunami
+        source: ["災害種別_津波"]
+      - key: for_large_fire
+        source: ["災害種別_大規模な火事"]
+      - key: for_inland_flooding
+        source: ["災害種別_内水氾濫"]
+      - key: for_volcano
+        source: ["災害種別_火山現象"]
+      - key: shelter_overlap
+        source: ["指定避難所との重複"]
+
+  - id: emergency_water_station
+    title: 災害時給水ステーション
+    page: bosai/kyuusui.html
+    file_pattern: 'kyuusui\d*\.csv'
+    columns: *standard_facility
+    extra_columns:
+      - key: water_type_purification
+        source: ["種別_浄水所、給水所", "種別_浄水所・給水所"]
+      - key: water_type_emergency_tank
+        source: ["種別_応急給水槽"]
+      - key: water_type_small_tank
+        source: ["種別_小規模応急給水槽"]
+      - key: secured_volume
+        source: ["確保水量"]
+
+  # 防災井戸と学校防災井戸は同じ28列の様式なので1テーブルにまとめ、
+  # well_category で出どころを分ける。metro_tokyo.ods.* が種別ごとに62区市町村を
+  # 1テーブルへ寄せているのと同じ扱いで、値は変えない
+  - id: disaster_well
+    title: 防災井戸
+    page: bosai/bousaiido.html
+    file_pattern: 'bousaiido\d*\.csv'
+    category: 民間
+    columns: *standard_facility
+
+  - id: disaster_well
+    title: 学校防災井戸
+    page: bosai/gakkoubousaiido.html
+    file_pattern: 'gakkoubousaiido\d*\.csv'
+    category: 学校
+    columns: *standard_facility

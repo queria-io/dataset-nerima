@@ -1,0 +1,13 @@
+version: 2
+
+models:
+- name: raw_geocode
+  description: 住所のジオコーディング結果の生データ。1行 = 原典の住所1件。
+- name: raw_evacuation_base
+  description: 避難拠点の生データ。原典は名称・所在地・経度・緯度の4列。
+- name: raw_homecoming_support_station
+  description: 帰宅支援ステーションの生データ。標準キーに正規化済み、全列 VARCHAR + _extras JSON。
+- name: raw_emergency_water_station
+  description: 災害時給水ステーションの生データ。標準キーに正規化済み、全列 VARCHAR + _extras JSON。
+- name: raw_disaster_well
+  description: 防災井戸の生データ。防災井戸と学校防災井戸をまとめ、category で分ける。全列 VARCHAR + _extras JSON。

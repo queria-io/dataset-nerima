@@ -1,0 +1,198 @@
+version: 2
+
+models:
+- name: evacuation_base
+  description: 練馬区が公開する「避難拠点」。区立小中学校に設置される避難拠点の名称・所在地・位置。原典は名称・所在地・経度・緯度の4列で、自治体標準オープンデータセットの様式ではない。
+  access: public
+  data_tests:
+  - ods_geo_consistent
+  - ods_geo_coverage
+  - ods_geocode_coverage
+  columns:
+  - name: name
+    data_tests:
+    - not_null
+    - unique
+  - name: address
+    data_tests:
+    - not_null
+  - name: lat
+  - name: lon
+  - name: geo_lat
+  - name: geo_lon
+  - name: geo_source
+  - name: geo_level
+  - name: geometry
+  - name: extras
+  - name: source_title
+  - name: source_url
+  - name: source_page
+
+- name: homecoming_support_station
+  description: 練馬区が公開する「帰宅支援ステーション」。災害時に帰宅困難者へ水道水・トイレ・情報を提供する施設。自治体標準オープンデータセットの指定緊急避難場所の様式で公開されており、災害種別の対応可否を BOOLEAN で持つ。
+  access: public
+  data_tests:
+  - ods_geo_consistent
+  - ods_geo_coverage
+  - ods_geocode_coverage
+  columns:
+  - name: municipality_code
+  - name: municipality_name
+  - name: address_municipality_code
+  - name: facility_id
+  - name: name
+    data_tests:
+    - not_null
+    - unique
+  - name: name_kana
+  - name: name_en
+  - name: town_id
+  - name: address
+    data_tests:
+    - not_null
+  - name: prefecture
+  - name: city
+  - name: town
+  - name: street_number
+  - name: building_name
+  - name: lat
+  - name: lon
+  - name: geo_lat
+  - name: geo_lon
+  - name: geo_source
+  - name: geo_level
+  - name: geometry
+  - name: elevation
+  - name: phone_number
+  - name: extension
+  - name: contact_email
+  - name: contact_form_url
+  - name: contact_note
+  - name: postal_code
+  - name: for_flood
+  - name: for_landslide
+  - name: for_storm_surge
+  - name: for_earthquake
+  - name: for_tsunami
+  - name: for_large_fire
+  - name: for_inland_flooding
+  - name: for_volcano
+  - name: shelter_overlap
+  - name: url
+  - name: image
+  - name: image_license
+  - name: notes
+  - name: extras
+  - name: source_title
+  - name: source_url
+  - name: source_page
+
+- name: emergency_water_station
+  description: 練馬区が公開する「災害時給水ステーション」。断水時に応急給水を行う浄水所・給水所・応急給水槽。種別ごとの該当を BOOLEAN で持ち、確保水量は原典の自由記述のまま。
+  access: public
+  data_tests:
+  - ods_geo_consistent
+  - ods_geo_coverage
+  - ods_geocode_coverage
+  columns:
+  - name: municipality_code
+  - name: municipality_name
+  - name: address_municipality_code
+  - name: facility_id
+  - name: name
+    data_tests:
+    - not_null
+    - unique
+  - name: name_kana
+  - name: name_en
+  - name: town_id
+  - name: address
+    data_tests:
+    - not_null
+  - name: prefecture
+  - name: city
+  - name: town
+  - name: street_number
+  - name: building_name
+  - name: lat
+  - name: lon
+  - name: geo_lat
+  - name: geo_lon
+  - name: geo_source
+  - name: geo_level
+  - name: geometry
+  - name: elevation
+  - name: phone_number
+  - name: extension
+  - name: contact_email
+  - name: contact_form_url
+  - name: contact_note
+  - name: postal_code
+  - name: water_type_purification
+  - name: water_type_emergency_tank
+  - name: water_type_small_tank
+  - name: secured_volume
+  - name: url
+  - name: image
+  - name: image_license
+  - name: notes
+  - name: extras
+  - name: source_title
+  - name: source_url
+  - name: source_page
+
+- name: disaster_well
+  description: 練馬区が公開する「防災井戸」と「学校防災井戸」。災害時に生活用水として使える井戸で、category が 民間 と 学校 を分ける。原典は緯度経度の列を持つが全行空のため、地図表示用の座標はすべて住所から求めた値。
+  access: public
+  data_tests:
+  - ods_geo_consistent
+  - ods_geo_coverage
+  - ods_geocode_coverage
+  - unique_key:
+      columns: [category, name]
+  columns:
+  - name: category
+    data_tests:
+    - not_null
+    - accepted_values:
+        values: ["民間", "学校"]
+  - name: municipality_code
+  - name: municipality_name
+  - name: address_municipality_code
+  - name: facility_id
+  - name: name
+    data_tests:
+    - not_null
+  - name: name_kana
+  - name: name_en
+  - name: town_id
+  - name: address
+    data_tests:
+    - not_null
+  - name: prefecture
+  - name: city
+  - name: town
+  - name: street_number
+  - name: building_name
+  - name: lat
+  - name: lon
+  - name: geo_lat
+  - name: geo_lon
+  - name: geo_source
+  - name: geo_level
+  - name: geometry
+  - name: elevation
+  - name: phone_number
+  - name: extension
+  - name: contact_email
+  - name: contact_form_url
+  - name: contact_note
+  - name: postal_code
+  - name: url
+  - name: image
+  - name: image_license
+  - name: notes
+  - name: extras
+  - name: source_title
+  - name: source_url
+  - name: source_page
