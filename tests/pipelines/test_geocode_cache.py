@@ -76,6 +76,16 @@ class TestRecord:
 
 
 class TestGeocode:
+    @pytest.fixture(autouse=True)
+    def not_in_ci(self, monkeypatch):
+        """CI 上でも手元と同じ分岐を通す。
+
+        in_ci() を固定しないと、CI では ABR を引く前のガードが先に効いて、
+        node の版に関する分岐を確かめたテストが別の理由で落ちる。
+        CI 側の分岐は test_ci_stops_before_touching_abr が見る。
+        """
+        monkeypatch.setattr(G, "in_ci", lambda: False)
+
     def test_full_cache_does_not_touch_abr(self, repo, monkeypatch):
         cache = repo / "cache.ndjson"
         G.save_cache(cache, {
@@ -138,6 +148,19 @@ class TestGeocode:
         saved = G.load_cache(cache)
         assert set(saved) == {"旭丘2-21-1", "東京都練馬区豊玉北6-12-1"}
         assert saved["東京都練馬区豊玉北6-12-1"]["geo_lat"] == 35.8
+
+    def test_ci_stops_before_touching_abr(self, repo, monkeypatch):
+        """ランナーには Node が入っているので、node の版では CI を弾けない。"""
+        cache = repo / "cache.ndjson"
+        G.save_cache(cache, {"旭丘2-21-1": _cached("旭丘2-21-1")})
+        monkeypatch.setattr(G, "in_ci", lambda: True)
+        monkeypatch.setattr(G, "_node_major", lambda: 22)
+        monkeypatch.setattr(
+            G, "download_abr", lambda *a, **k: pytest.fail("CI で ABR を引いた")
+        )
+        with pytest.raises(SystemExit) as raised:
+            G.geocode(str(repo / "bosai"), str(repo / "out"), str(cache))
+        assert "CI では ABR を引かない" in str(raised.value)
 
     def test_no_addresses_at_all_is_an_error(self, tmp_path):
         empty = tmp_path / "bosai"
