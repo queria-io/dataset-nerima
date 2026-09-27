@@ -104,13 +104,21 @@
 **ジオコーディングの結果は `geocode_cache.ndjson` にコミットしてあり、ビルドはそれを読みます。**
 ABR の配布は日本国外からは取れず、GitHub のホストランナーからは zip でないファイルが返ります。
 毎回引きに行くと週次の更新が必ず落ちるため、キャッシュに無い住所が出たときだけ引きに行き、
-引けなければ座標を落とさずにビルドを止めます。施設が増えたときは国内から更新してコミットします。
+引けなければ座標を落とさずにビルドを止めます。CI では引きに行く前に止めます。ランナーには
+Node が最初から入っているので、ワークフローから `node_version` を外すだけでは呼ばない保証に
+ならないためです。
+
+施設が増えたときは国内から更新してコミットします。
 
 ```bash
-mise exec node@22 -- uv run python -c 'from pipelines.geocode import geocode; geocode()'
+mise exec node@22 -- uv run python -c 'from pipelines.bosai import download_bosai; from pipelines.geocode import geocode; download_bosai(); geocode()'
 ```
 
+`data/` は毎回取り直すので、住所を集める前に `download_bosai()` を通します。
 Node.js 22 が要ります。依存の better-sqlite3 が Node 24 でビルドできません。
+
+座標の付かない住所があるとログに名指しで出ます。そのままコミットすると、以後は
+キャッシュに当たり続けて引き直されません。
 
 粒度は `geo_level` で引けます。原典由来は `source`、住所から求めた場合は
 `residential_detail` / `residential_block` / `machiaza_detail` / `machiaza` で、

@@ -16,6 +16,7 @@ GitHub ホストランナーでは zip でないファイルが返る。毎回�
 
 import json
 import logging
+import os
 import shutil
 import subprocess
 import unicodedata
@@ -33,6 +34,10 @@ NERIMA_LG_CODE = "131202"
 
 #: ジオコーディング結果の置き場。リポジトリにコミットする
 CACHE_PATH = "geocode_cache.ndjson"
+
+#: abrg の1コマンドあたりの上限（秒）。練馬区1件の download は手元で 90 秒ほど。
+#: 進まなくなったときに job の打ち切り（既定90分）まで走らせないための歯止め
+ABRG_TIMEOUT = 600
 
 #: 住所を持つ種別。data/bosai/<id>.ndjson を読む
 GEOCODED_DATASETS = [
@@ -125,8 +130,14 @@ def _abrg(args: list[str], **kwargs) -> None:
     subprocess.run(
         ["npx", "--yes", f"@digital-go-jp/abr-geocoder@{ABRG_VERSION}", *args],
         check=True,
+        timeout=ABRG_TIMEOUT,
         **kwargs,
     )
+
+
+def in_ci() -> bool:
+    """GitHub Actions を含む CI 上かどうか。"""
+    return os.environ.get("CI", "").strip().lower() in ("1", "true", "yes")
 
 
 def download_abr(abrg_dir: Path) -> None:
@@ -173,9 +184,20 @@ def save_cache(path: Path, cache: dict[str, dict]) -> None:
 
 
 def _record(address: str, result: dict | None) -> dict:
-    """abrg の結果を1行のレコードにする。採用しない粒度は座標を持たせない。"""
+    """abrg の結果を1行のレコードにする。採用しない粒度は座標を持たせない。
+
+    採らなかったときも abrg が返した粒度を abr_level に残す。これが無いと、
+    キャッシュを読んだだけでは「区の代表点しか返らなかった」のか
+    「1件も返らなかった」のかを区別できない。
+    """
     if result is None:
-        return {"address": address, "geo_lat": None, "geo_lon": None, "geo_level": None}
+        return {
+            "address": address,
+            "geo_lat": None,
+            "geo_lon": None,
+            "geo_level": None,
+            "abr_level": None,
+        }
     level = result.get("coordinate_level") or "unknown"
     usable = level not in REJECTED_LEVELS and result.get("lat") is not None
     return {
@@ -183,6 +205,7 @@ def _record(address: str, result: dict | None) -> dict:
         "geo_lat": result["lat"] if usable else None,
         "geo_lon": result["lon"] if usable else None,
         "geo_level": level if usable else None,
+        "abr_level": level,
         "lg_code": result.get("lg_code"),
         "machiaza_id": result.get("machiaza_id"),
         "pref": result.get("pref"),
@@ -201,17 +224,28 @@ def _record(address: str, result: dict | None) -> dict:
 def _unreachable(missing: dict[str, str], reason: str) -> SystemExit:
     """キャッシュを更新できないときのメッセージ。直し方まで書く。"""
     sample = ", ".join(sorted(missing)[:3])
+    # data/ は .gitignore に入っていて毎回取り直すので、住所を集める前に
+    # bosai の取得を通す必要がある。これを書かないと手順として動かない
+    fix = (
+        "mise exec node@22 -- uv run python -c "
+        "'from pipelines.bosai import download_bosai; "
+        "from pipelines.geocode import geocode; download_bosai(); geocode()'"
+    )
     return SystemExit(
         f"キャッシュに無い住所が {len(missing)} 件ある（例 {sample}）。{reason}\n"
         f"ABR の配布は日本国外からは取れないため、CI ではキャッシュを更新できない。"
         f"国内から次を回して {CACHE_PATH} をコミットする:\n"
-        f"  mise exec node@22 -- uv run python -c "
-        f"'from pipelines.geocode import geocode; geocode()'"
+        f"  {fix}"
     )
 
 
 def _resolve(missing: dict[str, str], dest: Path, *, skip_download: bool) -> dict[str, dict]:
     """キャッシュに無い住所だけ ABR に問い合わせる。取れなければ落とす。"""
+    # ランナーには Node が最初から入っているので、node の有無では CI を弾けない。
+    # ABR は日本国外から取れないと分かっているので、引きに行く前に止める。
+    # 引きに行くと download で進まなくなり、job の打ち切りまで走ることがある
+    if in_ci():
+        raise _unreachable(missing, "CI では ABR を引かない。")
     node_major = _node_major()
     if node_major is None:
         raise _unreachable(missing, "node が見つからない（Node.js 22 が要る）。")
@@ -237,11 +271,25 @@ def _resolve(missing: dict[str, str], dest: Path, *, skip_download: bool) -> dic
         run_geocoder(abrg_dir, input_path, raw_output)
     except subprocess.CalledProcessError as e:
         raise _unreachable(missing, f"abr-geocoder が失敗した（exit {e.returncode}）。") from e
+    except subprocess.TimeoutExpired as e:
+        raise _unreachable(
+            missing, f"abr-geocoder が {ABRG_TIMEOUT} 秒で終わらなかった。"
+        ) from e
 
     results = _load_results(raw_output)
     resolved = {}
+    unanswered = []
     for address, query in missing.items():
-        resolved[address] = _record(address, results.get(normalize(query)))
+        result = results.get(normalize(query))
+        if result is None:
+            # abrg は入力と同じ件数を返さない。隣接する2行を連結して1クエリに
+            # してしまうことがあり、連結された側は結果が返らない
+            unanswered.append(query)
+        resolved[address] = _record(address, result)
+    if unanswered:
+        logger.warning("  abrg が結果を返さなかった住所 %d 件", len(unanswered))
+        for query in unanswered[:5]:
+            logger.warning("    %s", query)
     return resolved
 
 
@@ -309,3 +357,11 @@ def _write(path: Path, collected: dict[str, str], cache: dict[str, dict]) -> Non
     logger.info("  座標あり %d / %d (%.1f%%)", adopted, total, 100 * adopted / total)
     for level, count in levels.most_common():
         logger.info("    %-20s %6d (%.1f%%)", level, count, 100 * count / total)
+
+    # 座標の付かない住所はキャッシュに固定され、次からは miss にならないので
+    # 引き直されない。気付けるのはここだけなので、毎回名指しで出す
+    without = [a for a in sorted(collected) if cache[a].get("geo_lat") is None]
+    if without:
+        logger.warning("  座標の付かない住所 %d 件（%s に入ったままになる）", len(without), CACHE_PATH)
+        for address in without[:5]:
+            logger.warning("    %s（abrg の粒度 %s）", address, cache[address].get("abr_level"))

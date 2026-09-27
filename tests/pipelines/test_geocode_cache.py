@@ -144,3 +144,71 @@ class TestGeocode:
         empty.mkdir()
         with pytest.raises(SystemExit):
             G.geocode(str(empty), str(tmp_path / "out"), str(tmp_path / "cache.ndjson"))
+
+
+class TestResolve:
+    """ABR を引く側。subprocess は差し替えるが、_resolve の本体は実際に通す。"""
+
+    @pytest.fixture(autouse=True)
+    def not_in_ci(self, monkeypatch):
+        monkeypatch.setattr(G, "in_ci", lambda: False)
+        monkeypatch.setattr(G, "_node_major", lambda: 22)
+
+    def _stub_abrg(self, monkeypatch, results=None, error=None):
+        def run(*a, **k):
+            if error is not None:
+                raise error
+        monkeypatch.setattr(G, "download_abr", run)
+        monkeypatch.setattr(G, "run_geocoder", lambda *a, **k: run())
+        monkeypatch.setattr(G, "_load_results", lambda path: results or {})
+
+    def test_refuses_to_run_in_ci(self, tmp_path, monkeypatch):
+        """ランナーには Node が入っているので、node の有無では弾けない。"""
+        monkeypatch.setattr(G, "in_ci", lambda: True)
+        monkeypatch.setattr(
+            G, "download_abr", lambda *a, **k: pytest.fail("CI で ABR を引いた")
+        )
+        with pytest.raises(SystemExit) as raised:
+            G._resolve({"旭丘2-21-1": "東京都練馬区旭丘2-21-1"}, tmp_path, skip_download=False)
+        assert "CI では ABR を引かない" in str(raised.value)
+
+    def test_matches_results_by_normalized_query(self, tmp_path, monkeypatch):
+        self._stub_abrg(monkeypatch, results={
+            "東京都練馬区旭丘2-21-1": {
+                "coordinate_level": "residential_detail", "lat": 35.73, "lon": 139.67
+            }
+        })
+        resolved = G._resolve(
+            {"旭丘2-21-1": "東京都練馬区旭丘2-21-1"}, tmp_path, skip_download=True
+        )
+        assert resolved["旭丘2-21-1"]["geo_lat"] == 35.73
+
+    def test_address_without_a_result_becomes_a_null_record(self, tmp_path, monkeypatch):
+        self._stub_abrg(monkeypatch, results={})
+        resolved = G._resolve({"どこか": "東京都練馬区どこか"}, tmp_path, skip_download=True)
+        assert resolved["どこか"]["geo_lat"] is None
+        assert resolved["どこか"]["abr_level"] is None
+
+    def test_failure_becomes_a_readable_stop(self, tmp_path, monkeypatch):
+        import subprocess
+        self._stub_abrg(monkeypatch, error=subprocess.CalledProcessError(1, "abrg"))
+        with pytest.raises(SystemExit) as raised:
+            G._resolve({"どこか": "東京都練馬区どこか"}, tmp_path, skip_download=False)
+        message = str(raised.value)
+        assert "abr-geocoder が失敗した" in message
+        assert "download_bosai" in message, "直し方は data/ を取り直すところから書くこと"
+
+    def test_hang_becomes_a_readable_stop(self, tmp_path, monkeypatch):
+        import subprocess
+        self._stub_abrg(monkeypatch, error=subprocess.TimeoutExpired("abrg", G.ABRG_TIMEOUT))
+        with pytest.raises(SystemExit) as raised:
+            G._resolve({"どこか": "東京都練馬区どこか"}, tmp_path, skip_download=False)
+        assert "終わらなかった" in str(raised.value)
+
+
+class TestRejectedLevelIsRecorded:
+    def test_keeps_the_level_abrg_returned(self):
+        """採らなかった理由が残らないと、キャッシュを見ても区別が付かない。"""
+        record = G._record("x", {"coordinate_level": "city", "lat": 35.7, "lon": 139.6})
+        assert record["geo_level"] is None
+        assert record["abr_level"] == "city"
