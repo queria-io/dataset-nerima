@@ -19,7 +19,12 @@ jobs:
     uses: queria-io/dataset-shared/.github/workflows/sync.yml@main
     with:
       dataset_name: nerima
-      # 住所のジオコーディングに abr-geocoder（Node のツール）を使う。
-      # 依存の better-sqlite3 が Node 24 でビルドできないので版を固定する
-      node_version: "22"
+      # Node は渡さない。住所の座標は geocode_cache.ndjson にコミットしてあり、
+      # ビルドは abr-geocoder を呼ばない。ABR の配布は日本国外からは取れず、
+      # ホストランナーからは zip でないファイルが返るので、CI では引けない。
+      #
+      # ランナーには Node が最初から入っているため、これを外すだけでは
+      # abr-geocoder を呼ばない保証にならない。pipelines/geocode.py が CI を見て
+      # 引きに行く前に落とす。キャッシュに無い住所が出たらそこで止まるので、
+      # 国内から更新してコミットする
     secrets: inherit

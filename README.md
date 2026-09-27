@@ -101,6 +101,25 @@
 ジオコーディングして補っています。`disaster_well` は原典が緯度経度の列を持つものの全行空で、
 座標はすべてこの経路によるものです。区が座標を入れれば原典の値が優先されます。
 
+**ジオコーディングの結果は `geocode_cache.ndjson` にコミットしてあり、ビルドはそれを読みます。**
+ABR の配布は日本国外からは取れず、GitHub のホストランナーからは zip でないファイルが返ります。
+毎回引きに行くと週次の更新が必ず落ちるため、キャッシュに無い住所が出たときだけ引きに行き、
+引けなければ座標を落とさずにビルドを止めます。CI では引きに行く前に止めます。ランナーには
+Node が最初から入っているので、ワークフローから `node_version` を外すだけでは呼ばない保証に
+ならないためです。
+
+施設が増えたときは国内から更新してコミットします。
+
+```bash
+mise exec node@22 -- uv run python -c 'from pipelines.bosai import download_bosai; from pipelines.geocode import geocode; download_bosai(); geocode()'
+```
+
+`data/` は毎回取り直すので、住所を集める前に `download_bosai()` を通します。
+Node.js 22 が要ります。依存の better-sqlite3 が Node 24 でビルドできません。
+
+座標の付かない住所があるとログに名指しで出ます。そのままコミットすると、以後は
+キャッシュに当たり続けて引き直されません。
+
 粒度は `geo_level` で引けます。原典由来は `source`、住所から求めた場合は
 `residential_detail` / `residential_block` / `machiaza_detail` / `machiaza` で、
 市区町村の代表点は採用しません。
@@ -122,9 +141,9 @@ bash scripts/build.sh
 pull → ビルド → push を通します。target 引数は取りません。公開先は `dataset.yml` の名前、
 アカウントは `QUERIA_TOKEN` で決まります。
 
-住所のジオコーディングに [abr-geocoder](https://github.com/digital-go-jp/abr-geocoder) を使うため
-Node.js 22 が必要です。依存の better-sqlite3 が Node 24 でビルドできないので、
-`.github/workflows/sync.yml` は `node_version` を明示しています。
+ビルドに Node.js は要りません。座標は `geocode_cache.ndjson` から読みます。
+キャッシュの更新だけが [abr-geocoder](https://github.com/digital-go-jp/abr-geocoder) を呼び、
+そこでのみ Node.js 22 と国内からの実行が要ります。
 
 公開せずに通しで確かめるときは、queria-cli の `tools/rotate.py` をスタンドインに対して回します。
 
