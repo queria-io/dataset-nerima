@@ -19,10 +19,12 @@ fields:
 - name: municipality_code
   title: 全国地方公共団体コード
   description: 原典の表記のまま
+  semantic: { role: entity, name: city }
 - name: municipality_name
   title: 地方公共団体名
 - name: address_municipality_code
   title: 所在地の全国地方公共団体コード
+  semantic: { role: entity, name: city }
 - name: facility_id
   title: ID
   description: 原典は空欄（2026-09-26 時点の実測）
@@ -83,6 +85,7 @@ fields:
   title: 連絡先備考
 - name: postal_code
   title: 郵便番号
+  semantic: { role: entity, name: postal_code }
 - name: url
   title: URL
 - name: image
