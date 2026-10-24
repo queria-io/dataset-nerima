@@ -10,6 +10,7 @@ keywords:
 - 生活用水
 - GIS
 published: true
+themes: [justice_safety_environment]
 sources:
 - path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/bosai/bousaiido.html
 fields:

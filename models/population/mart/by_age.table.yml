@@ -10,6 +10,7 @@ keywords:
 - 高齢化
 - 住民基本台帳
 published: true
+themes: [population]
 sources:
 - path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/nenreibetu.html
 fields:

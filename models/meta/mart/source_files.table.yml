@@ -8,6 +8,7 @@ keywords:
 - 取り込み
 - 品質
 published: true
+themes: [other]
 sources:
 - path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/index.html
 fields:

@@ -17,6 +17,7 @@ keywords:
   - GIS
 homepage: https://github.com/queria-io/dataset-nerima
 language: ja
+themes: [justice_safety_environment, population]
 
 licenses:
   - CC-BY-4.0
