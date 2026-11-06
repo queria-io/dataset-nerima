@@ -1,7 +1,11 @@
 schema: bosai
 name: disaster_well
 title: 防災井戸
-description: 練馬区が公開する「防災井戸」と「学校防災井戸」を1表にまとめたもの。災害時に生活用水として使える井戸で、category が 民間 と 学校 を分ける。原典は緯度経度の列を持つが全行空のため、地図表示用の座標はすべて住所から求めた値（2026-09-26 時点の実測）。区が座標を入れれば原典の値が優先される。
+description: |-
+  練馬区が公開する「防災井戸」と「学校防災井戸」を 1 つにまとめたものです。災害時に生活用水として使える井戸で、category が民間と学校を分けます。
+
+  - 原典の緯度経度は全行空なので、座標はすべて住所から求めた値です
+  - 地図に表示するときは、Queria が付与した geo_lat・geo_lon を使ってください
 keywords:
 - 練馬区
 - 東京都
@@ -58,16 +62,16 @@ fields:
   description: 原典の値
 - name: geo_lat
   title: 緯度（地図表示用）
-  description: Queria が付与。原典の緯度経度が使えればその値、使えなければ住所から求めた値。由来は geo_source を見る
+  description: 地図表示用の緯度（Queria が付与）。原典の値か住所から求めた値。由来は geo_source
 - name: geo_lon
   title: 経度（地図表示用）
   description: Queria が付与。geo_lat と対になる経度
 - name: geo_source
   title: 座標の由来
-  description: source=原典のまま、source_swapped=原典で緯度と経度が入れ替わっていたので入れ替えて採用、abr=住所から求めた値
+  description: source=原典のまま、source_swapped=緯度と経度を入れ替えた値、abr=住所から求めた値
 - name: geo_level
   title: 座標の粒度
-  description: 原典由来は source。住所から求めた場合は residential_detail / residential_block / machiaza_detail / machiaza
+  description: 座標の粒度。原典由来は source、住所からは residential_detail〜machiaza
 - name: geometry
   title: ジオメトリ
   description: Queria が付与。geo_lat / geo_lon から作った POINT。座標が無い行は NULL

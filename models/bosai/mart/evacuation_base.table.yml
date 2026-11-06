@@ -1,7 +1,12 @@
 schema: bosai
 name: evacuation_base
 title: 避難拠点
-description: 練馬区が公開する「避難拠点」。区立小中学校に設置される避難拠点の名称・所在地・位置。原典は名称・所在地・経度・緯度の4列で、自治体標準オープンデータセットの様式ではない。所在地に「東京都練馬区」が付かない。災害対策基本法に基づく指定緊急避難場所は別のデータで、metro_tokyo.ods.evacuation_space にある。
+description: |-
+  練馬区が公開する「避難拠点」です。区立小中学校に設置される避難拠点の名称・所在地・位置を持ちます。
+
+  - 所在地は「東京都練馬区」を含みません
+  - 災害対策基本法の指定緊急避難場所は metro_tokyo.ods.evacuation_space にあります
+  - 地図に表示するときは、Queria が付与した geo_lat・geo_lon を使ってください
 keywords:
 - 練馬区
 - 東京都
@@ -28,16 +33,16 @@ fields:
   description: 原典の値
 - name: geo_lat
   title: 緯度（地図表示用）
-  description: Queria が付与。原典の緯度経度が使えればその値、使えなければ住所から求めた値。由来は geo_source を見る
+  description: 地図表示用の緯度（Queria が付与）。原典の値か住所から求めた値。由来は geo_source
 - name: geo_lon
   title: 経度（地図表示用）
   description: Queria が付与。geo_lat と対になる経度
 - name: geo_source
   title: 座標の由来
-  description: source=原典のまま、source_swapped=原典で緯度と経度が入れ替わっていたので入れ替えて採用、abr=住所から求めた値
+  description: source=原典のまま、source_swapped=緯度と経度を入れ替えた値、abr=住所から求めた値
 - name: geo_level
   title: 座標の粒度
-  description: 原典由来は source。住所から求めた場合は residential_detail / residential_block / machiaza_detail / machiaza
+  description: 座標の粒度。原典由来は source、住所からは residential_detail〜machiaza
 - name: geometry
   title: ジオメトリ
   description: Queria が付与。geo_lat / geo_lon から作った POINT。座標が無い行は NULL
