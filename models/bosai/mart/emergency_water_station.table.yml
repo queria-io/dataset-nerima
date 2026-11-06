@@ -1,7 +1,10 @@
 schema: bosai
 name: emergency_water_station
 title: 災害時給水ステーション
-description: 練馬区が公開する「災害時給水ステーション」。断水時に応急給水を行う浄水所・給水所・応急給水槽。種別ごとの該当を BOOLEAN で持ち、確保水量は原典の自由記述のまま残す。
+description: |-
+  練馬区が公開する「災害時給水ステーション」です。断水時に応急給水を行う浄水所・給水所・応急給水槽の種別と、確保水量（原典の記述のまま）を持ちます。
+
+  - 地図に表示するときは、Queria が付与した geo_lat・geo_lon を使ってください
 keywords:
 - 練馬区
 - 東京都
@@ -55,16 +58,16 @@ fields:
   description: 原典の値
 - name: geo_lat
   title: 緯度（地図表示用）
-  description: Queria が付与。原典の緯度経度が使えればその値、使えなければ住所から求めた値。由来は geo_source を見る
+  description: 地図表示用の緯度（Queria が付与）。原典の値か住所から求めた値。由来は geo_source
 - name: geo_lon
   title: 経度（地図表示用）
   description: Queria が付与。geo_lat と対になる経度
 - name: geo_source
   title: 座標の由来
-  description: source=原典のまま、source_swapped=原典で緯度と経度が入れ替わっていたので入れ替えて採用、abr=住所から求めた値
+  description: source=原典のまま、source_swapped=緯度と経度を入れ替えた値、abr=住所から求めた値
 - name: geo_level
   title: 座標の粒度
-  description: 原典由来は source。住所から求めた場合は residential_detail / residential_block / machiaza_detail / machiaza
+  description: 座標の粒度。原典由来は source、住所からは residential_detail〜machiaza
 - name: geometry
   title: ジオメトリ
   description: Queria が付与。geo_lat / geo_lon から作った POINT。座標が無い行は NULL
