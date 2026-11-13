@@ -69,22 +69,11 @@ uv sync
 bash scripts/build.sh
 ```
 
-`scripts/build.sh` は `shared/scripts/build-dataset.sh` に委譲し、`queria sync` の
-pull → ビルド → push を通します。target 引数は取りません。公開先は `dataset.yml` の名前、
-アカウントは `QUERIA_TOKEN` で決まります。
+`scripts/build.sh` は公開中のバージョンを `fdl checkout` してから取り込み・ビルドし、`fdl commit` と `fdl push` で公開します（`shared/scripts/build-fdl.sh`）。手元では `FDL_TOKEN` に Queria の API トークンを入れます。GitHub Actions では Queria のトークンを OIDC で取得します。
 
 ビルドに Node.js は要りません。座標は `geocode_cache.ndjson` から読みます。
 キャッシュの更新だけが [abr-geocoder](https://github.com/digital-go-jp/abr-geocoder) を呼び、
 そこでのみ Node.js 22 と国内からの実行が要ります。
 
-公開せずに通しで確かめるときは、queria-cli の `tools/rotate.py` をスタンドインに対して回します。
-
-```bash
-uv run --group dev python tools/rotate.py \
-    --repo ~/ws/ghq/github.com/queria-io/dataset-nerima -- uv run python main.py
-```
-
-個別に回す場合は `queria pull` / `queria run -- uv run python main.py` / `queria push`、
-検証は `queria sql` です。`uv run dbt run` を直接実行すると DuckLake カタログと
-不整合が起きるため、必ず `queria` 経由でビルドします。
+`uv run dbt run` を直接実行すると作業カタログが作られないので、必ず `scripts/build.sh` でビルドします。
 
