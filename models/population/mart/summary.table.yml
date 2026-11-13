@@ -13,8 +13,7 @@ keywords:
 - 世帯
 - 住民基本台帳
 - 時系列
-published: true
-themes: [population]
+annotations: { queria: { themes: [population] } }
 sources:
 - path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/soukatuhyou.html
 fields:

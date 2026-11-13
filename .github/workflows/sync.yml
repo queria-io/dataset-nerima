@@ -16,7 +16,11 @@ concurrency:
 
 jobs:
   sync:
-    uses: queria-io/dataset-shared/.github/workflows/sync.yml@main
+    # Queria への書き込みは GitHub Actions の OIDC で 1 時間のトークンを取って行う
+    permissions:
+      contents: read
+      id-token: write
+    uses: queria-io/dataset-shared/.github/workflows/sync.yml@dc0e5caa95da02a5303726dca8df5dec26c94322
     with:
       dataset_name: nerima
       # Node は渡さない。住所の座標は geocode_cache.ndjson にコミットしてあり、
@@ -27,4 +31,5 @@ jobs:
       # abr-geocoder を呼ばない保証にならない。pipelines/geocode.py が CI を見て
       # 引きに行く前に落とす。キャッシュに無い住所が出たらそこで止まるので、
       # 国内から更新してコミットする
-    secrets: inherit
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

@@ -3,7 +3,6 @@ name = "dataset-nerima"
 version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
-    "queria>=0.13.0",
     "dbt-core>=1.11.2",
     "dbt-duckdb>=1.10.0",
     "pyyaml>=6.0",
@@ -16,7 +15,7 @@ dev = [
 ]
 
 [tool.uv]
-# ビルドは `uv run queria sync` を通るので、既定で dev を入れるとビルド環境に
+# ビルドは `scripts/build.sh` の `uv run` を通るので、既定で dev を入れるとビルド環境に
 # pytest が混ざる。テストは `uv run --group dev pytest` で明示的に入れる
 default-groups = []
 

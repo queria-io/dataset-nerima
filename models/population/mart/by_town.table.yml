@@ -15,8 +15,7 @@ keywords:
 - 町丁目
 - 小地域
 - 住民基本台帳
-published: true
-themes: [population]
+annotations: { queria: { themes: [population] } }
 sources:
 - path: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchoubetu.html
 fields:
@@ -26,7 +25,7 @@ fields:
 - name: town
   title: 町丁目
   description: 原典の表記のまま。丁目の数字は全角
-  semantic: { role: entity, name: small_area }
+  annotations: { queria: { semantic: { role: entity, name: small_area } } }
 - name: area_level
   title: 地域階層
   description: 総数=区全体、町域計=町ごとの合計、丁目=丁目単位
