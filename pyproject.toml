@@ -15,7 +15,7 @@ dev = [
 ]
 
 [tool.uv]
-# ビルドは `uv run queria sync` を通るので、既定で dev を入れるとビルド環境に
+# ビルドは `scripts/build.sh` の `uv run` を通るので、既定で dev を入れるとビルド環境に
 # pytest が混ざる。テストは `uv run --group dev pytest` で明示的に入れる
 default-groups = []
 
