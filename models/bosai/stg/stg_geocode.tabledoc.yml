@@ -1,0 +1,6 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: ジオコーディング結果のステージング。住所で引くための表。
+hidden: true
+columns:
+  - name: address
+    description: 原典の住所。この表が住所で一意でないと、施設側との左結合で行が増える

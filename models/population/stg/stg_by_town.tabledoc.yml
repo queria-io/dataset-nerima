@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 町丁目別のステージング。調査年月を DATE に、世帯数と人口を BIGINT にし、丁目の数値を取り出す。
+hidden: true

@@ -1,0 +1,68 @@
+$schema: https://tabledoc.queria.io/schemas/dataset/v1.json
+name: nerima
+title: 練馬区オープンデータ
+description: |-
+  東京都練馬区が公開する、住民基本台帳による世帯と人口の月次の値（総括表・町丁目別・年齢別、2016 年 4 月から）と、避難拠点・帰宅支援ステーション・災害時給水ステーション・防災井戸の一覧です。区の AED・公共施設・指定緊急避難場所などは metro_tokyo の ods スキーマにあります。
+
+  出典：練馬区オープンデータサイト（CC BY 4.0）を加工して作成。
+image: cover.png
+topics:
+  - オープンデータ
+  - 練馬区
+  - 東京都
+  - 人口
+  - 世帯
+  - 町丁目
+  - 防災
+  - 避難
+  - GIS
+synonyms:
+  - 練馬区
+  - ねりま
+  - 練馬区オープンデータ
+  - 住民基本台帳人口
+  - 避難拠点
+  - 防災井戸
+language: ja
+licenses:
+  - CC-BY-4.0
+sources:
+  - id: opendatasite
+    title: 練馬区オープンデータサイト
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/index.html
+  - id: riyoukiyaku
+    title: 練馬区オープンデータ利用規約
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/index.files/riyoukiyaku.pdf
+  - id: bousaiido
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/bosai/bousaiido.html
+  - id: kyuusui
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/bosai/kyuusui.html
+  - id: hinankyoten
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/bosai/hinankyoten.html
+  - id: kitakusien
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/bosai/kitakusien.html
+  - id: nenreibetu
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/nenreibetu.html
+  - id: chouchoubetu
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchoubetu.html
+  - id: soukatuhyou
+    url: https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/soukatuhyou.html
+contributors:
+  - id: city
+    title: 練馬区
+    url: https://www.city.nerima.tokyo.jp/
+    roles:
+      - rightsHolder
+temporal_coverage:
+  start: '2016-04-01'
+  end: '2026-09-01'
+spatial_coverage:
+  - JP
+update_frequency: monthly
+schemas:
+  - name: population
+    title: 世帯と人口
+  - name: bosai
+    title: 防災設備
+  - name: meta
+    title: 取り込み記録

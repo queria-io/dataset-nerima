@@ -2,7 +2,6 @@ version: 2
 
 models:
 - name: evacuation_base
-  description: 練馬区が公開する「避難拠点」。区立小中学校に設置される避難拠点の名称・所在地・位置。原典は名称・所在地・経度・緯度の4列で、自治体標準オープンデータセットの様式ではない。
   access: public
   data_tests:
   - ods_geo_consistent
@@ -28,7 +27,6 @@ models:
   - name: source_page
 
 - name: homecoming_support_station
-  description: 練馬区が公開する「帰宅支援ステーション」。災害時に帰宅困難者へ水道水・トイレ・情報を提供する施設。自治体標準オープンデータセットの指定緊急避難場所の様式で公開されており、災害種別の対応可否を BOOLEAN で持つ。
   access: public
   data_tests:
   - ods_geo_consistent
@@ -86,7 +84,6 @@ models:
   - name: source_page
 
 - name: emergency_water_station
-  description: 練馬区が公開する「災害時給水ステーション」。断水時に応急給水を行う浄水所・給水所・応急給水槽。種別ごとの該当を BOOLEAN で持ち、確保水量は原典の自由記述のまま。
   access: public
   data_tests:
   - ods_geo_consistent
@@ -139,7 +136,6 @@ models:
   - name: source_page
 
 - name: disaster_well
-  description: 練馬区が公開する「防災井戸」と「学校防災井戸」。災害時に生活用水として使える井戸で、category が 民間 と 学校 を分ける。原典は緯度経度の列を持つが全行空のため、地図表示用の座標はすべて住所から求めた値。
   access: public
   data_tests:
   - ods_geo_consistent

@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 年齢別のステージング。調査年月を DATE に、人数を BIGINT にし、総計行を is_total で立てる。
+hidden: true
