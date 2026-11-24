@@ -15,4 +15,4 @@ select
     url,
     page,
     try_cast(fetched_at as timestamp) as fetched_at
-from {{ ref('raw_source_files') }}
+from {{ ref('stg_source_files') }}

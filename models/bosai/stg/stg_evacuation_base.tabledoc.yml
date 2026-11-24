@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 避難拠点のステージング。緯度経度を数値化し、地図表示用の座標を決める。
+hidden: true

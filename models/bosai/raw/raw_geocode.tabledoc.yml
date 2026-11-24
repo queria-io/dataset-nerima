@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 住所のジオコーディング結果の生データ。1行 = 原典の住所1件。
+hidden: true

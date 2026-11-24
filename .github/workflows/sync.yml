@@ -3,8 +3,6 @@ name: Sync
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - "*.md"
   schedule:
     # 毎週月曜 05:00 JST。人口は毎月、防災設備は随時の更新
     - cron: "0 20 * * 0"
@@ -20,7 +18,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: queria-io/dataset-shared/.github/workflows/sync.yml@dc0e5caa95da02a5303726dca8df5dec26c94322
+    uses: queria-io/dataset-shared/.github/workflows/sync.yml@main
     with:
       dataset_name: nerima
       # Node は渡さない。住所の座標は geocode_cache.ndjson にコミットしてあり、

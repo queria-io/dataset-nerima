@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 世帯と人口（総括表）の生データ。まとめ CSV を取り込み、2018年10〜12月の二重の行を月次個別ファイルで裏取りしてある。全列 VARCHAR。
+hidden: true

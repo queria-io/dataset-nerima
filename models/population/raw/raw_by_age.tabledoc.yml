@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 世帯と人口（年齢別）の生データ。同じく二重の行を裏取り済み。全列 VARCHAR。
+hidden: true

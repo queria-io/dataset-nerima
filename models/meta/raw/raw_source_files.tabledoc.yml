@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 取り込みの実行結果の生データ。population と bosai の2本の NDJSON をまとめる。
+hidden: true

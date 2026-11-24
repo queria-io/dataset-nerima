@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 防災井戸のステージング。原典に座標が無いため、地図表示用の座標は住所からのジオコーディングだけが供給する。
+hidden: true

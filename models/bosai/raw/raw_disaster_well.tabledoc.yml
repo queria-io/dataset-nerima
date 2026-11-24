@@ -1,0 +1,3 @@
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
+description: 防災井戸の生データ。防災井戸と学校防災井戸をまとめ、category で分ける。全列 VARCHAR + _extras JSON。
+hidden: true
